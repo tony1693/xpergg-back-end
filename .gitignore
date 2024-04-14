@@ -1,7 +1,10 @@
 node_modules/
+!package-lock.json
+!package.json
 
 **RECORDAR INTALAR CADA UNO EN SU ORDENADOR** 
 npm init
 npm i express
 npm i cors
 npm i mysql2
+
