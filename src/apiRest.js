@@ -1,5 +1,6 @@
-const app = require('./app');
+const app = require ('./app')
 
-app.listen(app.get('port'),() => {
-    console.log(`La api se está ejecutando en el puerto: ${app.get('port')}`);
+app.listen (app.get ('port'), function()
+{
+    console.log ('Server listen on port' + app.get ('port'))
 })
