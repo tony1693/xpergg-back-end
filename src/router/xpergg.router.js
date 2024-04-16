@@ -6,7 +6,6 @@ const xperggCtrl = require ('../controller/xpergg.controller');
 
 router.post('/user/:id', xperggCtrl.addUserApi);
 router.put('/friends/:id', xperggCtrl.handleFriendRequest);
-router.post('/threads/:id', xperggCtrl.addThreadApi);
 router.post('/threads_messages/:id', xperggCtrl.insertMessageThread);
 
 
