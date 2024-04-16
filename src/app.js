@@ -2,9 +2,9 @@ const express = require ('express')
 const cors = require ('cors')
 const bodyParser = require('body-parser')
 const mysql = require('mysql2')
-const xperggRouters = require ('./routers/xpergg.routers')
+const xperggRouters = require ('./router/xpergg.router')
 
-const errorHandling = require('./xpergg-back/error/errorHandling')
+const errorHandling = require('./error/xpergg.error')
 
 const app = express();
 app.use(bodyParser.json());
