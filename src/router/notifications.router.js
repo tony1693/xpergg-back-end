@@ -7,3 +7,6 @@ router.post('/notifications', xperggCtrl.addNotification);
 
 router.get('/notificationsNewTrue', xperggCtrl.getNotificationNewTrue);
 router.put('/notificationsNewFalse', xperggCtrl.putNotificationNewFalse);
+
+
+module.exports = router;

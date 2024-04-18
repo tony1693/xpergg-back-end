@@ -6,4 +6,7 @@ router.post('/comments', xperggCtrl.addComment);
 router.post('/postcommentuser', xperggCtrl.addPostCommentUser);
 router.get('/posts', xperggCtrl.getPostsApi);
 router.post('/posts', xperggCtrl.addPostApi);
-router.get('/postsUser',xperggCtrl.getPostsFromUser) 
+router.get('/postsUser',xperggCtrl.getPostsFromUser),
+
+
+module.exports = router;
