@@ -30,7 +30,7 @@ async function addUserApi(req, res) {
   
   //verifica User para Login
 
-async function verifyUser(req, res) {
+async function login(req, res) {
     const connection = await connectionPromise;
     try {
         const { name, password } = req.body; 
@@ -38,8 +38,8 @@ async function verifyUser(req, res) {
         // Consulta la base de datos y verifica el name y password.
         const query = 'SELECT * FROM user WHERE name = ? AND password = ?';
         const [user] = await connection.query(query, [name, password]);
-
-        if (user) {
+        console.log(user)
+        if (user.length > 0) {
             res.status(200).send({ message: 'Usuario verificado correctamente', user });
         } else {
             res.status(401).send({ message: 'Credenciales incorrectas' });
@@ -139,4 +139,4 @@ const modifyPassword = async(req, res) => {
     }
 
     module.exports = { getXpergg, addUserApi, addUserApi, getUserAndFriendsById,getUserInterests,
-         updateUserAvailableApi, numberOfFriends, modifyPassword, verifyUser}
+         updateUserAvailableApi, numberOfFriends, modifyPassword, login}
