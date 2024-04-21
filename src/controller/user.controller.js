@@ -8,7 +8,7 @@ function getXpergg(request, response) {
   if (xpergg) {
     response.send(xpergg);
   } else {
-    response.status(404).send({ error: true, codigo: 404, message: 'don´t exist information of Data Base' });
+    response.status(404).send({ error: true, codigo: 404, message: 'does not exist information of Data Base' });
   }
 }
 
