@@ -15,18 +15,25 @@ function getXpergg(request, response) {
 // incluir las funciones para este endpoints....
 
 // Añade un User
-async function addUserApi(req, res) {
-    const connection = await connectionPromise;
-    try {
-        const { name, email, nationality, about_me, password, available_to_play, platform, interest, imgavatar } = req.body;
-        await connection.query('INSERT INTO user (name, email, nationality, about_me, password, available_to_play, platform, interest, imgavatar) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [name, email, nationality, about_me, password, available_to_play, platform, interest, imgavatar]);
-        res.status(201).send({ message: 'Usuario agregado exitosamente' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send({ error: true, codigo: 500, message: 'Error al agregar el usuario' });
-    }
-    console.log('Usuario añadido correctamente.');
+async function register(req, res) {
+  const connection = await connectionPromise;
+  try {
+      const { name, email, nationality, password, available_to_play, platform, interest } = req.body;
+
+      // Consulta para verificar si el usuario ya existe
+      const existingUser = await connection.query('SELECT id FROM user WHERE email = ?', [email]);
+      if (existingUser.length > 0) {
+          return res.status(400).send({ error: true, codigo: 400, message: 'El usuario ya está registrado. Por favor, prueba con otro usuario.' });
+      }
+
+      // Insertar el nuevo usuario sin las columnas about_me e imgavatar
+      await connection.query('INSERT INTO user (name, email, nationality, password, available_to_play, platform, interest) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, email, nationality, password, available_to_play, platform, interest]);
+      return res.status(201).send({ message: 'Usuario agregado exitosamente' });
+  } catch (error) {
+      console.error(error);
+      return res.status(500).send({ error: true, codigo: 500, message: 'Error al agregar el usuario' });
   }
+}
   
   async function getUserAndFriendsById(req, res) {
     const connection = await connectionPromise;
@@ -116,5 +123,5 @@ const modifyPassword = async(req, res) => {
     }
     }
 
-    module.exports = { getXpergg, addUserApi, addUserApi, getUserAndFriendsById,getUserInterests,
+    module.exports = { getXpergg, register, getUserAndFriendsById,getUserInterests,
          updateUserAvailableApi, numberOfFriends, modifyPassword}
