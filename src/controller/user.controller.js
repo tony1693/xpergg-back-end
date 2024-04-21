@@ -35,6 +35,28 @@ async function register(req, res) {
   }
 }
   
+  //verifica User para Login
+
+async function login(req, res) {
+    const connection = await connectionPromise;
+    try {
+        const { name, password } = req.body; 
+
+        // Consulta la base de datos y verifica el name y password.
+        const query = 'SELECT * FROM user WHERE name = ? AND password = ?';
+        const [user] = await connection.query(query, [name, password]);
+        console.log(user)
+        if (user.length > 0) {
+            res.status(200).send({ message: 'Usuario verificado correctamente', user });
+        } else {
+            res.status(401).send({ message: 'Credenciales incorrectas' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: true, codigo: 500, message: 'Error al verificar el usuario' });
+    }
+}
+
   async function getUserAndFriendsById(req, res) {
     const connection = await connectionPromise;
     try {
@@ -124,4 +146,4 @@ const modifyPassword = async(req, res) => {
     }
 
     module.exports = { getXpergg, register, getUserAndFriendsById,getUserInterests,
-         updateUserAvailableApi, numberOfFriends, modifyPassword}
+         updateUserAvailableApi, numberOfFriends, modifyPassword, login}

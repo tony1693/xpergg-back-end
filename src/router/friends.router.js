@@ -5,4 +5,7 @@ const xperggCtrl = require ('../controller/friends.controller');
 router.post('/friends', xperggCtrl.addfriendsStatusPending);
 router.put('/friends/:id', xperggCtrl.handleFriendRequest);
 router.get('/friends', xperggCtrl.getFriendsTable);
-router.put('/changeFriendStatus', xperggCtrl.changeFriendStatus)
+router.put('/changeFriendStatus', xperggCtrl.changeFriendStatus);
+
+
+module.exports = router;
