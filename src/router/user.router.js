@@ -2,7 +2,7 @@ const {Router} = require ('express')
 const router = Router();
 const xperggCtrl = require ('../controller/user.controller');
 
-router.post('/user/:id', xperggCtrl.addUserApi);
+router.post('/register', xperggCtrl.register);
 router.post('/login', xperggCtrl.login);
 router.get('/user/:id/friends', xperggCtrl.getUserAndFriendsById);
 router.get('/user/:id/interests', xperggCtrl.getUserInterests);
