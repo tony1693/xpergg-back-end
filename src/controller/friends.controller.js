@@ -53,7 +53,7 @@ const addfriendsStatusPending = async (req, res) => {
 
    // GET de la tabla de friends:
 
- const getFriendsTable = async(req, res) => {
+const getFriendsTable = async(req, res) => {
     const connection = await connectionPromise;
     try{
       const {user_id } = req.body
