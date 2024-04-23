@@ -32,8 +32,8 @@ app.use(userRouters);
 app.use(function(req, res, next)
 {
     res.status(404).json({  error:true,
-                            codice: 404,
-                             message:'endPoint doesn´t found'})
+                            code: 404,
+                            message:'endPoint not found'})
 })
 
 app.use(errorHandling);

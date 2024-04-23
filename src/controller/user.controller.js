@@ -8,29 +8,36 @@ function getXpergg(request, response) {
   if (xpergg) {
     response.send(xpergg);
   } else {
-    response.status(404).send({ error: true, codigo: 404, message: 'don´t exist information of Data Base' });
+    response.status(404).send({ error: true, codigo: 404, message: 'does not exist information of Data Base' });
   }
 }
 
 // incluir las funciones para este endpoints....
 
 // Añade un User
-async function addUserApi(req, res) {
-    const connection = await connectionPromise;
-    try {
-        const { name, email, nationality, about_me, password, available_to_play, platform, interest, imgavatar } = req.body;
-        await connection.query('INSERT INTO user (name, email, nationality, about_me, password, available_to_play, platform, interest, imgavatar) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [name, email, nationality, about_me, password, available_to_play, platform, interest, imgavatar]);
-        res.status(201).send({ message: 'Usuario agregado exitosamente' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send({ error: true, codigo: 500, message: 'Error al agregar el usuario' });
-    }
-    console.log('Usuario añadido correctamente.');
+async function register(req, res) {
+  const connection = await connectionPromise;
+  try {
+      const { name, email, nationality, password, available_to_play, platform, interest } = req.body;
+
+      // Consulta para verificar si el usuario ya existe
+      const existingUser = await connection.query('SELECT id FROM user WHERE email = ?', [email]);
+      if (existingUser.length > 0) {
+          return res.status(400).send({ error: true, codigo: 400, message: 'El usuario ya está registrado. Por favor, prueba con otro usuario.' });
+      }
+
+      // Insertar el nuevo usuario sin las columnas about_me e imgavatar
+      await connection.query('INSERT INTO user (name, email, nationality, password, available_to_play, platform, interest) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, email, nationality, password, available_to_play, platform, interest]);
+      return res.status(201).send({ message: 'Usuario agregado exitosamente' });
+  } catch (error) {
+      console.error(error);
+      return res.status(500).send({ error: true, codigo: 500, message: 'Error al agregar el usuario' });
   }
+}
   
   //verifica User para Login
 
-async function verifyUser(req, res) {
+async function login(req, res) {
     const connection = await connectionPromise;
     try {
         const { name, password } = req.body; 
@@ -38,8 +45,8 @@ async function verifyUser(req, res) {
         // Consulta la base de datos y verifica el name y password.
         const query = 'SELECT * FROM user WHERE name = ? AND password = ?';
         const [user] = await connection.query(query, [name, password]);
-
-        if (user) {
+        console.log(user)
+        if (user.length > 0) {
             res.status(200).send({ message: 'Usuario verificado correctamente', user });
         } else {
             res.status(401).send({ message: 'Credenciales incorrectas' });
@@ -138,5 +145,5 @@ const modifyPassword = async(req, res) => {
     }
     }
 
-    module.exports = { getXpergg, addUserApi, addUserApi, getUserAndFriendsById,getUserInterests,
-         updateUserAvailableApi, numberOfFriends, modifyPassword, verifyUser}
+    module.exports = { getXpergg, register, getUserAndFriendsById,getUserInterests,
+         updateUserAvailableApi, numberOfFriends, modifyPassword, login}
