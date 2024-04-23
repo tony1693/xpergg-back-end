@@ -20,6 +20,7 @@ async function getGames(req , res){
   } catch (error) {
     console.error(error);
   }
+
 }
 
 // incluir las funciones para este endpoints....
