@@ -17,30 +17,30 @@ function getXpergg(request, response) {
 //GET a la tabla threads
 
 const getThreads = async (req, res) => {
-  const connection = await connectionPromise;
-  try{
-    let sql;
-    sql = `SELECT * FROM xpergg.threads`;
-    let [result] = await connection.query(sql)
-    res.send(result)
-  } catch(error){
-    console.log(error)
-  }
   // const connection = await connectionPromise;
-    // try {
+  // try{
     // let sql;
-    // if(req.query.platform){
-      // const platform = req.query.platform;
-      // sql = `SELECT * FROM xpergg.threads WHERE platform = '${platform}'`
-    // }
-    // else{
-      // return res.status(400).json({ error: "No se proporcionó una plataforma en la consulta." });
-    // }
-    // let [result] = await connection.query(sql);
-    // res.send(result)}
-    // catch(error){
-      // console.log("Error getting threads", error)
-    // }
+    // sql = `SELECT * FROM xpergg.threads`;
+    // let [result] = await connection.query(sql)
+    // res.send(result)
+  // } catch(error){
+    // console.log(error)
+  // }
+  const connection = await connectionPromise;
+    try {
+    let sql;
+    if(req.query.platform){
+      const platform = req.query.platform;
+      sql = `SELECT * FROM xpergg.threads WHERE platform = '${platform}'`
+    }
+    else{
+      return res.status(400).json({ error: "No se proporcionó una plataforma en la consulta." });
+    }
+    let [result] = await connection.query(sql);
+    res.send(result)}
+    catch(error){
+      console.log("Error getting threads", error)
+    }
   }
 
   // GET de un thread específico filtrado por nombre del juego
@@ -50,7 +50,7 @@ const getThreads = async (req, res) => {
     try{
       let sql;
       const searchedGame = req.body.game
-      sql = `SELECT * FROM xpergg.threads WHERE game = '${searchedGame}'` 
+      sql = `SELECT * FROM xpergg.threads WHERE game = '${searchedGame}' ORDER BY date DESC` 
       let result = await connection.query(sql)
       res.send(result)
     } catch(error){
@@ -64,7 +64,7 @@ const getThreads = async (req, res) => {
     const connection = await connectionPromise;
     try {
       // Extrae los datos del thread del cuerpo de la solicitud
-      const { platform, game, subject, user_id } = req.body;
+      const { platform, game, subject, user_id, date } = req.body;
   
       // Define la consulta SQL para insertar el nuevo thread
       const query = 'INSERT INTO threads (platform, game, subject, user_id) VALUES (?, ?, ?, ?)';
