@@ -1,6 +1,6 @@
 const {Router} = require ('express')
 const router = Router();
-const xperggCtrl = require ('../controller/newsApi.controller');
-
+const newsController = require ('../controller/newsApi.controller');
+router.get("/games", newsController.getGames);
 
 module.exports = router;
