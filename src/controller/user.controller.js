@@ -19,16 +19,22 @@ async function register(req, res) {
   const connection = await connectionPromise;
   try {
       const { name, email, nationality, password, available_to_play, platform, interest } = req.body;
+      console.log(req.body);
 
       // Consulta para verificar si el usuario ya existe
-      const existingUser = await connection.query('SELECT id FROM user WHERE email = ?', [email]);
-      if (existingUser.length > 0) {
+      const existingUser = await connection.query('SELECT user_id FROM xpergg.user WHERE email = ?', [email]);
+      console.log(existingUser);
+      if (existingUser[0].length > 0) {
           return res.status(400).send({ error: true, codigo: 400, message: 'El usuario ya está registrado. Por favor, prueba con otro usuario.' });
       }
 
       // Insertar el nuevo usuario sin las columnas about_me e imgavatar
-      await connection.query('INSERT INTO user (name, email, nationality, password, available_to_play, platform, interest) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, email, nationality, password, available_to_play, platform, interest]);
-      return res.status(201).send({ message: 'Usuario agregado exitosamente' });
+      
+      const insertUser = await connection.query('INSERT INTO xpergg.user (name, email, nationality, password, available_to_play, platform, interest) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+      [name, email, nationality, password, available_to_play, JSON.stringify(platform),  JSON.stringify(interest)]);
+      console.log(insertUser);
+      const [user] = await connection.query('SELECT * FROM user WHERE user_id = ?' ,[insertUser[0].insertId]) 
+      return res.status(200).send({ message: 'Usuario agregado exitosamente', user });
   } catch (error) {
       console.error(error);
       return res.status(500).send({ error: true, codigo: 500, message: 'Error al agregar el usuario' });
