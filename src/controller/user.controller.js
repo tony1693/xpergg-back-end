@@ -104,10 +104,10 @@ async function login(req, res) {
   
   async function updateUserAvailableApi(req, res) {
     const connection = await connectionPromise;
-    const userId = req.params.id;
+    const userId = req.query.id;
     const { available_to_play } = req.body; 
     try {
-        await connection.query('UPDATE user SET Available_to_play = ? WHERE user_id = ?', [available_to_play, userId]);
+        await connection.query('UPDATE user SET available_to_play = ? WHERE user_id = ?', [available_to_play ? 1 : 0, userId]);
         res.send('User availability updated successfully.');
     } catch (error) {
         console.error(error);

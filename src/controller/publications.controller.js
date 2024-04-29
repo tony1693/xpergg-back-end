@@ -17,7 +17,10 @@ function getXpergg(request, response) {
 async function getPostsApi(req, res) {
     const connection = await connectionPromise;
     try {
-      const [results] = await connection.query('SELECT * FROM post');
+      const [results] = await connection.query(`SELECT post.post_id, post.url, post.description, post.user_id, user.name AS user_name, user.imgavatar AS user_avatar
+      FROM post
+      JOIN user ON post.user_id = user.user_id`
+      );
       res.send(results);
     } catch (error) {
       console.error(error);
@@ -28,12 +31,12 @@ async function getPostsApi(req, res) {
   async function addPostApi(req, res) {
   const connection = await connectionPromise;
   try {
-      const { title, content, author_id } = req.body;
-      await connection.query('INSERT INTO post (title, content, author_id) VALUES (?, ?, ?)', [title, content, author_id]);
+      const { description, url, user_id } = req.body;
+      await connection.query('INSERT INTO post (description, url, user_id) VALUES (?, ?, ?)', [description, url, user_id]);
       res.status(201).send({ message: 'Post added successfully' });
   } catch (error) {
       console.error(error);
-      res.status(500).send({ error: true, codigo: 500, message: '' });
+      res.status(500).send({ error: true, codigo: 500, message: 'Post could not be added' });
   }
   }
 
