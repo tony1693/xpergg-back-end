@@ -4,6 +4,7 @@ async function createConnection() {
     const connection = await mysql.createConnection({
         host: 'localhost',
         user: 'root',
+ // meter aquí vuestra contraseña de acceso a la BDD.
         password: 'codenotch1805', // meter aquí vuestra contraseña de acceso a la BDD.
         database: 'xpergg',
         waitForConnections: true,
