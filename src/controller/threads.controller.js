@@ -65,14 +65,14 @@ const getThreads = async (req, res) => {
     try {
       // Extrae los datos del thread del cuerpo de la solicitud
       const { platform, game, subject, user_id, date } = req.body;
-  
+
       // Define la consulta SQL para insertar el nuevo thread
       const query = 'INSERT INTO threads (platform, game, subject, user_id) VALUES (?, ?, ?, ?)';
       const values = [platform, game, subject, user_id];
-  
+
       // Ejecuta la consulta en la base de datos
       await connection.query(query, values);
-  
+
       // Envía una respuesta de éxito
       res.status(200).send({message: 'Hilo creado correctamente'});
     } catch (error) {

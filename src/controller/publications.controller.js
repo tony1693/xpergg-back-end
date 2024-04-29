@@ -29,16 +29,16 @@ async function getPostsApi(req, res) {
   }
   
   async function addPostApi(req, res) {
-  const connection = await connectionPromise;
-  try {
-      const { description, url, user_id } = req.body;
-      await connection.query('INSERT INTO post (description, url, user_id) VALUES (?, ?, ?)', [description, url, user_id]);
-      res.status(201).send({ message: 'Post added successfully' });
-  } catch (error) {
-      console.error(error);
-      res.status(500).send({ error: true, codigo: 500, message: 'Post could not be added' });
-  }
-  }
+    const connection = await connectionPromise;
+    try {
+        const { description, url, user_id } = req.body;
+        await connection.query('INSERT INTO post (description, url, user_id) VALUES (?, ?, ?)', [description, url, user_id]);
+        res.status(201).send({ message: 'Post added successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: true, codigo: 500, message: 'Post could not be added' });
+    }
+    }
 
   // GET a la tabla de post y un id-user en concreto y conteo de los post del user.
 
