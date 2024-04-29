@@ -9,6 +9,6 @@ router.get('/user/:id/interests', xperggCtrl.getUserInterests);
 router.put('/user/available', xperggCtrl.updateUserAvailableApi);
 router.get('/numberFriends', xperggCtrl.numberOfFriends);
 router.put('/modifyPassword', xperggCtrl.modifyPassword);
-
+router.put('/profile', xperggCtrl.updateUser);
 
 module.exports = router;

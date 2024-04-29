@@ -63,6 +63,31 @@ async function login(req, res) {
     }
 }
 
+
+// Actualizar un usuario existente
+async function updateUser(req, res) {
+  try {
+    const { imgavatar, name, email, nationality, about_me, password, available_to_play, platform, interest } = req.body;
+    const userId = req.params.id;
+
+    const connection = await connectionPromise;
+
+    await connection.query('UPDATE xpergg.user SET imgavatar = ?, name = ?, email = ?, nationality = ?, about_me = ?, password = ?, available_to_play = ?, platform = ?, interest = ? WHERE user_id = ?', 
+    [imgavatar, name, email, nationality, about_me, password, available_to_play, JSON.stringify(platform), JSON.stringify(interest), userId]);
+  
+    await new Promise(resolve => setTimeout(resolve, 1000));   // Agregar un pequeño retraso
+
+    const [user] = await connection.query('SELECT * FROM user WHERE user_id = ?', [userId]);
+
+    return res.status(200).send({ message: 'Usuario actualizado exitosamente', user });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ error: true, codigo: 500, message: 'Error al actualizar el usuario' });
+  }
+}
+
+
+
   async function getUserAndFriendsById(req, res) {
     const connection = await connectionPromise;
     try {
@@ -152,4 +177,4 @@ const modifyPassword = async(req, res) => {
     }
 
     module.exports = { getXpergg, register, getUserAndFriendsById,getUserInterests,
-         updateUserAvailableApi, numberOfFriends, modifyPassword, login}
+         updateUserAvailableApi, numberOfFriends, modifyPassword, login, updateUser}
