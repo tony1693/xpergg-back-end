@@ -217,8 +217,4 @@ const modifyAvatar = async(req, res) => {
 }
 
     module.exports = { getXpergg, register, getUserAndFriendsById,getUserInterests,
-<<<<<<< HEAD
-         updateUserAvailableApi, numberOfFriends, modifyPassword, login, updateUser}
-=======
-        updateUserAvailableApi, numberOfFriends, modifyPassword, login, modifyAvatar}
->>>>>>> 9cf550e6cd97072b741d05dfc8df776ab1751da1
+         updateUserAvailableApi, numberOfFriends, modifyPassword, login, updateUser, modifyAvatar}
