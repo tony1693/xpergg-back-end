@@ -63,23 +63,48 @@ async function login(req, res) {
     }
 }
 
-
 // Actualizar un usuario existente
 async function updateUser(req, res) {
   try {
     const { imgavatar, name, email, nationality, about_me, password, available_to_play, platform, interest } = req.body;
     const userId = req.params.id;
 
+    if (!userId) {
+      return res.status(400).send({ error: true, codigo: 400, message: 'El ID del usuario no está definido' });
+    }
+
     const connection = await connectionPromise;
 
-    await connection.query('UPDATE xpergg.user SET imgavatar = ?, name = ?, email = ?, nationality = ?, about_me = ?, password = ?, available_to_play = ?, platform = ?, interest = ? WHERE user_id = ?', 
-    [imgavatar, name, email, nationality, about_me, password, available_to_play, JSON.stringify(platform), JSON.stringify(interest), userId]);
+    // Obtén el usuario actual de la base de datos
+    const [rows] = await connection.query('SELECT * FROM user WHERE user_id = ?', [userId]);
+    const currentUser = rows[0];
+
+    if (!currentUser) {
+      return res.status(404).send({ error: true, codigo: 404, message: 'Usuario no encontrado' });
+    }
+
+    // Si un campo es undefined, usa el valor actual del usuario
+    const updatedImgavatar = imgavatar !== undefined ? imgavatar : currentUser.imgavatar;
+    const updatedName = name !== undefined ? name : currentUser.name;
+    const updatedEmail = email !== undefined ? email : currentUser.email;
+    const updatedNationality = nationality !== undefined ? nationality : currentUser.nationality;
+    const updatedAboutMe = about_me !== undefined ? about_me : currentUser.about_me;
+    const updatedPassword = password !== undefined ? password : currentUser.password;
+    const updatedAvailableToPlay = available_to_play !== undefined ? available_to_play : currentUser.available_to_play;
+    const updatedPlatform = platform !== undefined ? JSON.stringify(platform) : currentUser.platform;
+    const updatedInterest = interest !== undefined ? JSON.stringify(interest) : currentUser.interest;
+
+    const [result] = await connection.query('UPDATE xpergg.user SET imgavatar = ?, name = ?, email = ?, nationality = ?, about_me = ?, password = ?, available_to_play = ?, platform = ?, interest = ? WHERE user_id = ?', 
+    [updatedImgavatar, updatedName, updatedEmail, updatedNationality, updatedAboutMe, updatedPassword, updatedAvailableToPlay, updatedPlatform, updatedInterest, userId]);
   
+    console.log(result.affectedRows); // Imprime el número de filas afectadas
+
     await new Promise(resolve => setTimeout(resolve, 1000));   // Agregar un pequeño retraso
 
-    const [user] = await connection.query('SELECT * FROM user WHERE user_id = ?', [userId]);
+    const [updatedRows] = await connection.query('SELECT * FROM user WHERE user_id = ?', [userId]);
+    const updatedUser = updatedRows[0];
 
-    return res.status(200).send({ message: 'Usuario actualizado exitosamente', user });
+    return res.status(200).send({ message: 'Usuario actualizado exitosamente', user: updatedUser });
   } catch (error) {
     console.error(error);
     return res.status(500).send({ error: true, codigo: 500, message: 'Error al actualizar el usuario' });
