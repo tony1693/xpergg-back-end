@@ -43,14 +43,13 @@ const getThreads = async (req, res) => {
     try {
       // Extrae los datos del thread del cuerpo de la solicitud
       const { platform, game, subject, user_id, date } = req.body;
-  
+
       // Define la consulta SQL para insertar el nuevo thread
       const query = 'INSERT INTO threads (platform, game, subject, user_id, date) VALUES (?, ?, ?, ?, ?)';
       const values = [platform, game, subject, user_id, date];
 
       // Ejecuta la consulta en la base de datos
       await connection.query(query, values);
-      await connection.query(sql)
       // Envía una respuesta de éxito
       res.status(200).send({message: 'Hilo creado correctamente'});
     } catch (error) {
@@ -59,19 +58,6 @@ const getThreads = async (req, res) => {
       res.status(500).send('Error al crear el thread');
     }
   };
-
-// Ordena los threads por fecha:
-const orderThreads = async(req, res) => {
-  const connection = await connectionPromise;
-try{
-  let sql = `SELECT * FROM xpergg.threads ORDER BY date DESC`;
-  let [result] = await connection.query(sql);
-  console.log(result);
-  res.send(result)
-} catch(error){
-  console.log(error)
-}
-}
   
   //GET a la table threads con tabla messages, y con tabla de user.
   
@@ -113,5 +99,5 @@ async function insertMessageThread(req, res) {
     }
   }
 
-  module.exports = { getXpergg, postThread, getThreads, getThreadsMessagesUsers, insertMessageThread, orderThreads}
+  module.exports = { getXpergg, postThread, getThreads, getThreadsMessagesUsers, insertMessageThread}
 
