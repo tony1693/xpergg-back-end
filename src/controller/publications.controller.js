@@ -19,7 +19,7 @@ async function getPostsApi(req, res) {
     try {
       const [results] = await connection.query(`SELECT post.post_id, post.url, post.description, post.user_id, user.name AS user_name, user.imgavatar AS user_avatar
       FROM post
-      JOIN user ON post.user_id = user.user_id ORDER BY post.post_id DESC`
+      JOIN user ON post.user_id = user.user_id ORDER BY post.date DESC`
       );
       res.send(results);
     } catch (error) {
@@ -31,8 +31,8 @@ async function getPostsApi(req, res) {
   async function addPostApi(req, res) {
     const connection = await connectionPromise;
     try {
-        const { description, url, user_id } = req.body;
-        await connection.query('INSERT INTO post (description, url, user_id) VALUES (?, ?, ?)', [description, url, user_id]);
+        const { description, url, user_id, date } = req.body;
+        await connection.query('INSERT INTO post (description, url, user_id, date) VALUES (?, ?, ?, ?)', [description, url, user_id, date]);
         res.status(201).send({ message: 'Post added successfully' });
     } catch (error) {
         console.error(error);
