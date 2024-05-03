@@ -19,7 +19,7 @@ async function getPostsApi(req, res) {
     try {
       const [results] = await connection.query(`SELECT post.post_id, post.url, post.description, post.user_id, user.name AS user_name, user.imgavatar AS user_avatar
       FROM post
-      JOIN user ON post.user_id = user.user_id`
+      JOIN user ON post.user_id = user.user_id ORDER BY post.post_id DESC`
       );
       res.send(results);
     } catch (error) {
@@ -29,57 +29,36 @@ async function getPostsApi(req, res) {
   }
   
   async function addPostApi(req, res) {
-  const connection = await connectionPromise;
-  try {
-      const { description, url, user_id } = req.body;
-      await connection.query('INSERT INTO post (description, url, user_id) VALUES (?, ?, ?)', [description, url, user_id]);
-      res.status(201).send({ message: 'Post added successfully' });
-  } catch (error) {
-      console.error(error);
-      res.status(500).send({ error: true, codigo: 500, message: 'Post could not be added' });
-  }
-  }
+    const connection = await connectionPromise;
+    try {
+        const { description, url, user_id } = req.body;
+        await connection.query('INSERT INTO post (description, url, user_id) VALUES (?, ?, ?)', [description, url, user_id]);
+        res.status(201).send({ message: 'Post added successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: true, codigo: 500, message: 'Post could not be added' });
+    }
+    }
 
   // GET a la tabla de post y un id-user en concreto y conteo de los post del user.
 
-const getPostsFromUser = async(req, res) => {
-    const connection = await connectionPromise;
-    try{  
-      let sql;
-      if(req.query.id){
-        const userId = req.query.id;
-        sql = `SELECT p.*, 
-        (SELECT COUNT(*) 
-        FROM xpergg.post 
-        WHERE user_id = ${userId}) AS posts_count 
-        FROM xpergg.post p 
-        WHERE user_id = ${userId}`
-      } else{
-        console.log("User not found")
-      } 
-      let [result] = await connection.query(sql);
-      res.send(result)
-    } catch(error){
-      console.log('Error getting post from user', error);
-      res.status(500).send('Internal server error')
-    }
-    }
-
-    //POST a la tabla Post-comment-user 
-const addPostCommentUser = async (req, res) => {
-    const connection = await connectionPromise;
-    try {
-      console.log(req.body);
-      let sql = `INSERT INTO xpergg.post_comment_user (post_id, comment_id, user_id) VALUES (1, 3, 1)`;
-      let [result] = await connection.query(sql);
-      console.log(result);
-      res.send(result);
-    }
-    catch (err) {
-      console.log(err);
-      res.status(500).send('Error al crear.');
-    }
+// Controlador (JavaScript)
+async function getUserPostCount(req, res) {
+  const connection = await connectionPromise;
+  try {
+      const userId = req.query.id;
+      const [results] = await connection.query(
+          `SELECT COUNT(*) AS post_count 
+          FROM post 
+          WHERE user_id = ?`, 
+          [userId]
+      );
+      res.send(results[0]);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: true, codigo: 500, message: 'Error getting post count from user' });
   }
+}
 
   //POST a la tabla comentarios
 const addComment = async (req, res) => {
@@ -98,4 +77,4 @@ const addComment = async (req, res) => {
   }
   
   
-    module.exports = { getXpergg, getPostsApi, addPostApi, getPostsFromUser, addPostCommentUser, addComment}
+    module.exports = { getXpergg, getPostsApi, addPostApi, getUserPostCount, addComment, addComment}

@@ -23,6 +23,9 @@ async function getGames(req , res){
 
 }
 
+
+
+
 // incluir las funciones para este endpoints....
 
-module.exports = { getXpergg , getGames }
+module.exports = { getXpergg  , getGames }
