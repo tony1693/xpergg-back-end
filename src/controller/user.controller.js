@@ -151,5 +151,22 @@ const modifyPassword = async(req, res) => {
     }
     }
 
+  // Modificar avatar
+
+  const modifyAvatar = async(req, res) => {
+    const connection = await connectionPromise;
+    try{
+      const { user_id, imgavatar} = req.body;
+      let sql;
+      sql = `UPDATE xpergg.user SET imgavatar = '${imgavatar}' WHERE user_id = '${user_id}'`;  
+      let [result] = await connection.query(sql);
+      res.send(result)
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+
+
     module.exports = { getXpergg, register, getUserAndFriendsById,getUserInterests,
-         updateUserAvailableApi, numberOfFriends, modifyPassword, login}
+    updateUserAvailableApi, numberOfFriends, modifyPassword, login,modifyAvatar}
