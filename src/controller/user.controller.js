@@ -219,4 +219,4 @@ const modifyPassword = async(req, res) => {
 
 
     module.exports = { getXpergg, register, getUserAndFriendsById,getUserInterests,
-    updateUserAvailableApi, numberOfFriends, modifyPassword, login,modifyAvatar}
+    updateUserAvailableApi, numberOfFriends, modifyPassword, login,modifyAvatar, updateUser}
