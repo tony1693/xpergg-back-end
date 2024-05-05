@@ -6,6 +6,7 @@ router.post('/comments', xperggCtrl.addComment);
 router.get('/posts', xperggCtrl.getPostsApi);
 router.post('/posts', xperggCtrl.addPostApi);
 router.get('/getUserPostCount', xperggCtrl.getUserPostCount);
+router.get('/postsUser/:userId', xperggCtrl.getPostsByUser)
 
 
 

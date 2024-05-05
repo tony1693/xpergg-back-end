@@ -60,21 +60,39 @@ async function getUserPostCount(req, res) {
   }
 }
 
+// GET de todos los posts de 1 user:
+
+async function getPostsByUser(req, res){
+  const connection = await connectionPromise;
+  try{
+    const userId = req.params.userId;
+    let sql = `SELECT post.post_id, post.url, post.description, post.user_id, user.name AS user_name, user.imgavatar AS user_avatar
+    FROM post
+    JOIN user ON post.user_id = user.user_id WHERE post.user_id = ${userId} ORDER BY post.post_id DESC`
+    const [result] = await connection.query(sql)
+    console.log(result);
+    res.send(result)
+  }
+  catch(error){
+    console.log(error);
+    res.status(500).send({ error: true, message: 'Internal server error' });
+  }
+}
+
   //POST a la tabla comentarios
 const addComment = async (req, res) => {
     const connection = await connectionPromise;
     try {
-      console.log(req.body);
-      let sql = `INSERT INTO xpergg.comments (comment_id, date, text) VALUES (3, "2024-04-15", "hola3pruebapostman")`;
-      let [result] = await connection.query(sql);
-      console.log(result);
-      res.send(result);
+      const { comment_id, date, text } = req.body;
+      await connection.query('INSERT INTO xpergg.comments (comment_id, date, text) VALUES (?, ?, ?)', [comment_id, date, text])
+      res.status(201).send({ message: 'Comment added successfully' });
     }
     catch (err) {
       console.log(err);
       res.status(500).send('Error al crear el comentario.');
     }
   }
+
+
   
-  
-    module.exports = { getXpergg, getPostsApi, addPostApi, getUserPostCount, addComment, addComment}
+    module.exports = { getXpergg, getPostsApi, addPostApi, getUserPostCount, addComment, addComment,getPostsByUser}
