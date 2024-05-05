@@ -151,5 +151,20 @@ const modifyPassword = async(req, res) => {
     }
     }
 
+    async function modifyProfile(req, res) {
+      const connection = await connectionPromise;
+      const userId = req.query.id;
+      const { name, nationality, about_me, platform, interest, imgavatar } = req.body; 
+      try {
+          await connection.query('UPDATE user SET name = ?, nationality = ?, about_me = ?, platform = ?, interest = ?, imgavatar = ? WHERE user_id = ?', 
+              [name, nationality, about_me, JSON.stringify(platform), JSON.stringify(interest), imgavatar, userId]);
+          res.send('User Modify.');
+      } catch (error) {
+          console.error(error);
+          res.status(500).send({ error: true, codigo: 500, message: '' });
+      }
+  }
+  
+
     module.exports = { getXpergg, register, getUserAndFriendsById,getUserInterests,
-         updateUserAvailableApi, numberOfFriends, modifyPassword, login}
+         updateUserAvailableApi, numberOfFriends, modifyPassword, login , modifyProfile}
