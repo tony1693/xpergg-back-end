@@ -5,6 +5,7 @@ async function createConnection() {
         host: 'localhost',
         user: 'root',
         password: 'codenotch1805', // meter aquí vuestra contraseña de acceso a la BDD.
+
         database: 'xpergg',
         waitForConnections: true,
         connectionLimit: 10,
