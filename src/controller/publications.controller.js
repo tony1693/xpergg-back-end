@@ -15,19 +15,18 @@ function getXpergg(request, response) {
 // incluir las funciones para este endpoints....
 
 async function getPostsApi(req, res) {
-    const connection = await connectionPromise;
-    try {
-      const [results] = await connection.query(`SELECT post.post_id, post.url, post.description, post.user_id, user.name AS user_name, user.imgavatar AS user_avatar
-      FROM post
-      JOIN user ON post.user_id = user.user_id ORDER BY post.post_id DESC`
-      );
-      res.send(results);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send({ error: true, codigo: 500, message: '' });
-    }
+  const connection = await connectionPromise;
+  try {
+    const [results] = await connection.query(`SELECT post.post_id, post.url, post.description, post.user_id, user.name AS user_name, user.imgavatar AS user_avatar
+    FROM post
+    JOIN user ON post.user_id = user.user_id`
+    );
+    res.send(results);
+  } catch (error) {
+    console.error(error);
   }
-  
+}
+
   async function addPostApi(req, res) {
     const connection = await connectionPromise;
     try {
@@ -83,8 +82,8 @@ async function getPostsByUser(req, res){
 const addComment = async (req, res) => {
     const connection = await connectionPromise;
     try {
-      const { comment_id, date, text, user_id } = req.body;
-      await connection.query('INSERT INTO xpergg.comments (comment_id, date, text, user) VALUES (?, ?, ?, ?)', [comment_id, date, text, user_id])
+      const { comment_id, date, text } = req.body;
+      await connection.query('INSERT INTO xpergg.comments (comment_id, date, text) VALUES (?, ?, ?)', [comment_id, date, text])
       res.status(201).send({ message: 'Comment added successfully' });
     }
     catch (err) {
