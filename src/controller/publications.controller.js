@@ -19,7 +19,7 @@ async function getPostsApi(req, res) {
   try {
     const [results] = await connection.query(`SELECT post.post_id, post.url, post.description, post.user_id, user.name AS user_name, user.imgavatar AS user_avatar
     FROM post
-    JOIN user ON post.user_id = user.user_id`
+    JOIN user ON post.user_id = user.user_id ORDER BY post.post_id DESC`
     );
     res.send(results);
   } catch (error) {
