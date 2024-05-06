@@ -83,8 +83,8 @@ async function getPostsByUser(req, res){
 const addComment = async (req, res) => {
     const connection = await connectionPromise;
     try {
-      const { comment_id, date, text } = req.body;
-      await connection.query('INSERT INTO xpergg.comments (comment_id, date, text) VALUES (?, ?, ?)', [comment_id, date, text])
+      const { comment_id, date, text, user_id } = req.body;
+      await connection.query('INSERT INTO xpergg.comments (comment_id, date, text, user) VALUES (?, ?, ?, ?)', [comment_id, date, text, user_id])
       res.status(201).send({ message: 'Comment added successfully' });
     }
     catch (err) {
@@ -93,6 +93,26 @@ const addComment = async (req, res) => {
     }
   }
 
+  // GET a la tabla de comentarios
 
+  // const showComments = async(req, res) => {
+  //   const connection = await connectionPromise;
+  //   try{
+  //     let sql;
+  //     if(req.query.post_id){
+  //       const post_id = req.query.post_id;
+  //       sql =`SELECT comments.comment_id, comments.date, comments.text, comments.user FROM xpergg.comments
+  //       JOIN xpergg.user ON comments.user = user.user_id`;
+  //     }else{
+  //       return res.status(400).json({error: "No se encuentra este post"})
+  //     }
+  //     let [result] = await connection.query(sql)
+  //     res.send(result)
+  //   }
+  //   catch(error){
+  //     console.log(error);
+  //     res.status(500).send({ error: true, message: 'Internal server error' });
+  //   }
+  //   }
   
     module.exports = { getXpergg, getPostsApi, addPostApi, getUserPostCount, addComment, addComment,getPostsByUser}
