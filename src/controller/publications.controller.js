@@ -60,21 +60,59 @@ async function getUserPostCount(req, res) {
   }
 }
 
+// GET de todos los posts de 1 user:
+
+async function getPostsByUser(req, res){
+  const connection = await connectionPromise;
+  try{
+    const userId = req.params.userId;
+    let sql = `SELECT post.post_id, post.url, post.description, post.user_id, user.name AS user_name, user.imgavatar AS user_avatar
+    FROM post
+    JOIN user ON post.user_id = user.user_id WHERE post.user_id = ${userId} ORDER BY post.post_id DESC`
+    const [result] = await connection.query(sql)
+    console.log(result);
+    res.send(result)
+  }
+  catch(error){
+    console.log(error);
+    res.status(500).send({ error: true, message: 'Internal server error' });
+  }
+}
+
   //POST a la tabla comentarios
 const addComment = async (req, res) => {
     const connection = await connectionPromise;
     try {
-      console.log(req.body);
-      let sql = `INSERT INTO xpergg.comments (comment_id, date, text) VALUES (3, "2024-04-15", "hola3pruebapostman")`;
-      let [result] = await connection.query(sql);
-      console.log(result);
-      res.send(result);
+      const { comment_id, date, text, user_id } = req.body;
+      await connection.query('INSERT INTO xpergg.comments (comment_id, date, text, user) VALUES (?, ?, ?, ?)', [comment_id, date, text, user_id])
+      res.status(201).send({ message: 'Comment added successfully' });
     }
     catch (err) {
       console.log(err);
       res.status(500).send('Error al crear el comentario.');
     }
   }
+
+  // GET a la tabla de comentarios
+
+  // const showComments = async(req, res) => {
+  //   const connection = await connectionPromise;
+  //   try{
+  //     let sql;
+  //     if(req.query.post_id){
+  //       const post_id = req.query.post_id;
+  //       sql =`SELECT comments.comment_id, comments.date, comments.text, comments.user FROM xpergg.comments
+  //       JOIN xpergg.user ON comments.user = user.user_id`;
+  //     }else{
+  //       return res.status(400).json({error: "No se encuentra este post"})
+  //     }
+  //     let [result] = await connection.query(sql)
+  //     res.send(result)
+  //   }
+  //   catch(error){
+  //     console.log(error);
+  //     res.status(500).send({ error: true, message: 'Internal server error' });
+  //   }
+  //   }
   
-  
-    module.exports = { getXpergg, getPostsApi, addPostApi, getUserPostCount, addComment, addComment}
+    module.exports = { getXpergg, getPostsApi, addPostApi, getUserPostCount, addComment, addComment,getPostsByUser}
