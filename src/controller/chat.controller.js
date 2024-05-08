@@ -87,7 +87,7 @@ const chatsUser = async (req, res) => {
 const getThreadById = async (req, res) => {
   try {
     const connection = await connectionPromise;
-    const query = 'SELECT * FROM threads WHERE id = ?';
+    const query = 'SELECT * FROM threads WHERE thread_id = ?';
     const values = [req.params.id];
     const [result] = await connection.query(query, values);
     res.json(result);
@@ -96,6 +96,7 @@ const getThreadById = async (req, res) => {
     res.status(500).send('Error en el servidor al recuperar el hilo');
   }
 }
+
 
 module.exports = { getXpergg, getChatMessages, postChatMessage, chatsUser, getThreadById}
 
