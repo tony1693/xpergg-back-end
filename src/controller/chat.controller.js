@@ -41,20 +41,20 @@ const postChatMessage = async (req, res) => {
   }
 };
 
-
-
-const getChatMessages = async (req, res) => {
+const getChatMessagesById = async (req, res) => {
   try {
     const connection = await connectionPromise;
-    const threadId = req.params.thread_id; // Asume que thread_id se pasa como un parámetro de ruta
+    const threadId = req.params.thread_id;
+
     const query = `
       SELECT u.*, m.*
       FROM user u
       JOIN chat_messages m ON m.user_id = u.user_id
-      JOIN threads t ON t.thread_id = m.chat_id
+      JOIN threads t ON m.chat_message_id = t.thread_id  -- Ajuste aquí el nombre de la columna
       WHERE t.thread_id = ?
       ORDER BY m.date DESC;
     `;
+
     const result = await connection.query(query, [threadId]);
     res.json(result.rows);
   } catch (error) {
@@ -100,5 +100,5 @@ const getThreadById = async (req, res) => {
 }
 
 
-module.exports = { getXpergg, getChatMessages, postChatMessage, chatsUser, getThreadById}
+module.exports = { getXpergg, getChatMessagesById, postChatMessage, chatsUser, getThreadById}
 
