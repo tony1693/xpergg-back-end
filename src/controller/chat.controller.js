@@ -43,17 +43,19 @@ const postChatMessage = async (req, res) => {
 
 
 
-//GET a la tabla chat y tabla message, y tabla de user. (order by date)
 const getChatMessages = async (req, res) => {
   try {
     const connection = await connectionPromise;
+    const threadId = req.params.thread_id; // Asume que thread_id se pasa como un parámetro de ruta
     const query = `
       SELECT u.*, m.*
       FROM user u
       JOIN chat_messages m ON m.user_id = u.user_id
+      JOIN threads t ON t.thread_id = m.chat_id
+      WHERE t.thread_id = ?
       ORDER BY m.date DESC;
     `;
-    const result = await connection.query(query);
+    const result = await connection.query(query, [threadId]);
     res.json(result.rows);
   } catch (error) {
     console.error(error);
