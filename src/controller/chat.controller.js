@@ -41,27 +41,27 @@ const postChatMessage = async (req, res) => {
   }
 };
 
-const getChatMessagesById = async (req, res) => {
+
+const getChatMessagesByChatId = async (req, res) => {
   try {
     const connection = await connectionPromise;
-    const threadId = req.params.thread_id;
+    const chatId = req.params.chat_id;
 
     const query = `
-      SELECT u.*, m.*
-      FROM user u
-      JOIN chat_messages m ON m.user_id = u.user_id
-      JOIN threads t ON m.chat_message_id = t.thread_id  -- Ajuste aquí el nombre de la columna
-      WHERE t.thread_id = ?
-      ORDER BY m.date DESC;
+      SELECT *
+      FROM chat_messages
+      WHERE chat_id = ?
+      ORDER BY date DESC;
     `;
 
-    const result = await connection.query(query, [threadId]);
-    res.json(result.rows);
+    const [result] = await connection.query(query, [chatId]);
+    res.json(result);
   } catch (error) {
     console.error(error);
     res.status(500).send('Error en el servidor al recuperar los mensajes de chat');
   }
 };
+
 
 
 
@@ -100,5 +100,5 @@ const getThreadById = async (req, res) => {
 }
 
 
-module.exports = { getXpergg, getChatMessagesById, postChatMessage, chatsUser, getThreadById}
+module.exports = { getXpergg, getChatMessagesByChatId, postChatMessage, chatsUser, getThreadById}
 
