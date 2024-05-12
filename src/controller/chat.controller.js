@@ -22,7 +22,7 @@ const postChatMessage = async (req, res) => {
     let { chat_message_id, date, user_id, text, chat_id } = req.body;
 
     // Convierte la fecha a un formato que MySQL pueda interpretar correctamente
-    date = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+    // date = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
 
     // Define la consulta SQL para insertar el nuevo mensaje
     const query = 'INSERT INTO chat_messages (chat_message_id, date, user_id, text, chat_id) VALUES (?, ?, ?, ?, ?)';
