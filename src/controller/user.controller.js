@@ -1,5 +1,6 @@
 const { connectionPromise } = require('../database');
 
+
 // Inicializa la variable xpergg como un objeto vacío
 let xpergg = {};
 
@@ -215,8 +216,7 @@ const modifyPassword = async(req, res) => {
     catch(error){
       console.log(error)
     }
-  }
-
+  };
 
     module.exports = { getXpergg, register, getUserAndFriendsById,getUserInterests,
     updateUserAvailableApi, numberOfFriends, modifyPassword, login,modifyAvatar, updateUser}

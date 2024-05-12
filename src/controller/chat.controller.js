@@ -51,7 +51,7 @@ const getChatMessagesByChatId = async (req, res) => {
       SELECT *
       FROM chat_messages
       WHERE chat_id = ?
-      ORDER BY date DESC;
+      ORDER BY date ASC;
     `;
 
     const [result] = await connection.query(query, [chatId]);
@@ -99,6 +99,55 @@ const getThreadById = async (req, res) => {
   }
 }
 
+// Obtener datos de chat_messages y user
+const getChatData = async (req, res) => {
+  setTimeout(async () => {
+    try {
+      const connection = await connectionPromise;
+      const query = `
+        SELECT cm.chat_message_id, cm.text, cm.date, u.name, u.imgavatar
+        FROM chat_messages cm
+        INNER JOIN user u ON cm.user_id = u.user_id
+        WHERE cm.chat_id = ?;`;
 
-module.exports = { getXpergg, getChatMessagesByChatId, postChatMessage, chatsUser, getThreadById}
+      const [chatData] = await connection.query(query, [req.params.chatId]);
+
+      console.log('Chat data retrieved:', chatData); // Agrega este registro
+
+      res.json(chatData);
+    } catch (error) {
+      console.error('Error al obtener datos del chat:', error.message); // Agrega más detalles al mensaje de error
+      res.status(500).json({ error: 'Error al obtener datos del chat' });
+    }
+  }, 1000); // Retraso de 1 segundo
+}
+
+// Función asíncrona para obtener el user_id de la tabla chat_messages
+const getMessageChatUserId = async (req, res) => {
+  try {
+    const connection = await connectionPromise;
+    const chatId = req.params.chatId;
+
+    const query = 'SELECT user_id FROM chat_messages WHERE chat_id = ?';
+    const values = [chatId];
+
+    const [result] = await connection.query(query, values);
+    
+    // Verifica si el resultado de la consulta es undefined
+    if (!result || result.length === 0) {
+      res.status(404).send('No se encontró ningún mensaje para el chatId dado');
+    } else {
+      res.json(result[0].user_id);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al obtener el user_id');
+  }
+};
+
+
+
+
+
+module.exports = { getXpergg, getChatMessagesByChatId, postChatMessage, chatsUser, getThreadById, getChatData, getMessageChatUserId}
 
