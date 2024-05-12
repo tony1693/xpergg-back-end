@@ -8,7 +8,8 @@ router.get('/chatUser', xperggCtrl.chatsUser)
 router.get('/api/threads/:id', xperggCtrl.getThreadById);
 
 // Ruta para publicar un nuevo mensaje
-router.post('/api/chat/:chat_id/messages', xperggCtrl.postChatMessage);
+// router.post('/api/chat/:chat_id/messages', xperggCtrl.postChatMessage);
+router.post('/chat', xperggCtrl.postChatMessage)
 // Ruta para obtener los mensajes de un chat específico
 router.get('/api/chat/:chat_id/messages', xperggCtrl.getChatMessagesByChatId);
 
