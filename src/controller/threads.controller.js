@@ -80,6 +80,26 @@ const getThreads = async (req, res) => {
     }
   }
 
+  // Get a la tabla de threads by UserId
+
+  const getUsersInThread = async (req, res) => {
+    const connection = await connectionPromise;
+    try{
+      let thread_id = req.params.id;
+    let sql;
+    sql = `SELECT user.user_id, user.name, user.imgavatar 
+    FROM xpergg.user
+    JOIN xpergg.threads_messages ON user.user_id = threads_messages.user_id
+    WHERE threads_messages.thread_id = ${thread_id}`
+    const [result] = await connection.query(sql);
+    res.send(result);
+    } catch(error){
+      console.log(error);
+      res.status(500).send('Error al obtener los usuarios de este hilo');
+    }
+    
+  } 
+
   
 // Insertar un mensaje de un hilo en la tabla THREADS_MESSAGES.
 async function insertMessageThread(req, res) {
@@ -96,5 +116,5 @@ async function insertMessageThread(req, res) {
     }
   }
 
-  module.exports = { getXpergg, postThread, getThreads, getThreadsMessagesUsers, insertMessageThread}
+  module.exports = { getXpergg, postThread, getThreads, getThreadsMessagesUsers, insertMessageThread,getUsersInThread}
 

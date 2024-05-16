@@ -82,14 +82,35 @@ async function getPostsByUser(req, res){
 const addComment = async (req, res) => {
     const connection = await connectionPromise;
     try {
-      const { comment_id, date, text } = req.body;
-      await connection.query('INSERT INTO xpergg.comments (comment_id, date, text) VALUES (?, ?, ?)', [comment_id, date, text])
+      const { comment_id, date, text, user_id, post_id } = req.body;
+      await connection.query('INSERT INTO xpergg.comments (comment_id, date, text, user_id, post_id) VALUES (?, ?, ?, ?, ?)', [comment_id, date, text, user_id, post_id])
       res.status(201).send({ message: 'Comment added successfully' });
     }
     catch (err) {
       console.log(err);
       res.status(500).send('Error al crear el comentario.');
     }
+  }
+
+  // GET a tabla de comentarios que traiga el numero por user_id
+
+  const showCommentsUser = async(req, res) => {
+    const connection = await connectionPromise;
+  try {
+      const userId = req.query.id;
+      const [results] = await connection.query(
+          `SELECT COUNT(*) AS comments_count 
+          FROM comments 
+          WHERE user_id = ?`, 
+          [userId]
+      );
+      res.send(results[0]);
+      console.log(results[0])
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: true, codigo: 500, message: 'Error getting comment count from user' });
+  }
   }
 
   // GET a la tabla de comentarios
@@ -114,4 +135,4 @@ const addComment = async (req, res) => {
   //   }
   //   }
   
-    module.exports = { getXpergg, getPostsApi, addPostApi, getUserPostCount, addComment, addComment,getPostsByUser}
+    module.exports = { getXpergg, getPostsApi, addPostApi, getUserPostCount, addComment, addComment,getPostsByUser, showCommentsUser}
