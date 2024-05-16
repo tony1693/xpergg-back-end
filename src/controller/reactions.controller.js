@@ -18,20 +18,19 @@ function getXpergg(request, response) {
 const addReaction = async (req, res) => {
   const connection = await connectionPromise;
   try {
+    const { user_id, date, reaction_type } = req.body;
     console.log(req.body);
-    let { user_id, post_id, reaction_id, date, reaction_type } = req.body;
-
     // Insertar la reacción en la tabla 'reactions'
-    let sqlReaction = 'INSERT INTO xpergg.reactions (reaction_id, date, reaction_type) VALUES (?, ?, ?)';
-    let [resultReaction] = await connection.query(sqlReaction, [reaction_id, date, reaction_type]);
-
+    const sqlReaction = 'INSERT INTO xpergg.reactions (date, reaction_type, user_id) VALUES (?, ?, ?)';
+    await connection.query(sqlReaction, [user_id, date, reaction_type ]);
+    res.status(201).send({ message: 'Reacción guardado correctamente.' });
     // Insertar la relación en la tabla 'post_Reaction_user'
-    let sqlPostReactionUser = 'INSERT INTO xpergg.post_reaction_user (post_id, reaction_id, user_id) VALUES (?, ?, ?)';
-    let [resultPostReactionUser] = await connection.query(sqlPostReactionUser, [post_id, reaction_id, user_id]);
+    // let sqlPostReactionUser = 'INSERT INTO xpergg.post_reaction_user (post_id, reaction_id, user_id) VALUES (?, ?, ?)';
+    // let [resultPostReactionUser] = await connection.query(sqlPostReactionUser, [post_id, reaction_id, user_id]);
 
-    console.log(resultReaction);
-    console.log(resultPostReactionUser);
-    res.send({resultReaction, resultPostReactionUser});
+    // console.log(resultReaction);
+    // console.log(resultPostReactionUser);
+    // res.send({resultReaction, resultPostReactionUser});
   }
   catch (err) {
     console.log(err);
@@ -41,20 +40,41 @@ const addReaction = async (req, res) => {
 
 
   //POST a la tabla Post-reaction-user 
-const addPostReactionUser = async (req, res) => {
-    const connection = await connectionPromise;
-    try {
-      console.log(req.body);
-      let sql = `INSERT INTO xpergg.post_reaction_user (post_id, reaction_id, user_id) VALUES (1, 1, 1)`;
-      let [result] = await connection.query(sql);
-      console.log(result);
-      res.send(result);
-    }
-    catch (err) {
-      console.log(err);
-      res.status(500).send('Error al crear.');
-    }
-  }
+// const addPostReactionUser = async (req, res) => {
+//     const connection = await connectionPromise;
+//     try {
+//       console.log(req.body);
+//       let sql = `INSERT INTO xpergg.post_reaction_user (post_id, reaction_id, user_id) VALUES (1, 1, 1)`;
+//       let [result] = await connection.query(sql);
+//       console.log(result);
+//       res.send(result);
+//     }
+//     catch (err) {
+//       console.log(err);
+//       res.status(500).send('Error al crear.');
+//     }
+//   }
+
+// GET a la tabla de reactions para hacer un conteo
+
+const showReactionsUser = async(req, res) => {
+  const connection = await connectionPromise;
+try {
+    const userId = req.query.id;
+    const [results] = await connection.query(
+        `SELECT COUNT(*) AS reactions_count 
+        FROM reactions 
+        WHERE user_id = ?`, 
+        [userId]
+    );
+    res.send(results[0]);
+    console.log(results[0])
+
+} catch (error) {
+    console.error(error);
+    res.status(500).send({ error: true, codigo: 500, message: 'Error getting comment count from user' });
+}
+}
   
   // DELETE a la tabla reacciones y la tabla de post-reaction-user.
 const deleteReaction = async (req, res) => {
@@ -87,4 +107,4 @@ const deleteReaction = async (req, res) => {
     }
   }
   
-  module.exports = { getXpergg, addReaction, addPostReactionUser, deleteReaction, deletePostReactionUser}
+  module.exports = { getXpergg, addReaction, deleteReaction, deletePostReactionUser, showReactionsUser}
