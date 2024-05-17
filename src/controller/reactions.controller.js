@@ -18,11 +18,11 @@ function getXpergg(request, response) {
 const addReaction = async (req, res) => {
   const connection = await connectionPromise;
   try {
-    const { user_id, date, reaction_type } = req.body;
+    const { date, reaction_type, user_id  } = req.body;
     console.log(req.body);
     // Insertar la reacción en la tabla 'reactions'
-    const sqlReaction = 'INSERT INTO xpergg.reactions (date, reaction_type, user_id) VALUES (?, ?, ?)';
-    await connection.query(sqlReaction, [user_id, date, reaction_type ]);
+    const sqlReaction = 'INSERT INTO xpergg.reactions (date, reaction_type, user_id) VALUES ( ?, ?, ?)';
+    await connection.query(sqlReaction, [ date, reaction_type, user_id  ]);
     res.status(201).send({ message: 'Reacción guardado correctamente.' });
     // Insertar la relación en la tabla 'post_Reaction_user'
     // let sqlPostReactionUser = 'INSERT INTO xpergg.post_reaction_user (post_id, reaction_id, user_id) VALUES (?, ?, ?)';

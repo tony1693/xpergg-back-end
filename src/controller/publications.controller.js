@@ -30,8 +30,8 @@ async function getPostsApi(req, res) {
   async function addPostApi(req, res) {
     const connection = await connectionPromise;
     try {
-        const { description, url, user_id } = req.body;
-        await connection.query('INSERT INTO post (description, url, user_id) VALUES (?, ?, ?)', [description, url, user_id]);
+        const { description, url, user_id, date } = req.body;
+        await connection.query('INSERT INTO post (description, url, user_id, date) VALUES (?, ?, ?, ?)', [description, url, user_id, date]);
         res.status(201).send({ message: 'Post added successfully' });
     } catch (error) {
         console.error(error);
@@ -103,6 +103,7 @@ const addComment = async (req, res) => {
           FROM comments 
           WHERE user_id = ?`, 
           [userId]
+        
       );
       res.send(results[0]);
       console.log(results[0])
@@ -113,26 +114,25 @@ const addComment = async (req, res) => {
   }
   }
 
-  // GET a la tabla de comentarios
+  // GET a la tabla de comentarios por POST_ID! 
 
-  // const showComments = async(req, res) => {
-  //   const connection = await connectionPromise;
-  //   try{
-  //     let sql;
-  //     if(req.query.post_id){
-  //       const post_id = req.query.post_id;
-  //       sql =`SELECT comments.comment_id, comments.date, comments.text, comments.user FROM xpergg.comments
-  //       JOIN xpergg.user ON comments.user = user.user_id`;
-  //     }else{
-  //       return res.status(400).json({error: "No se encuentra este post"})
-  //     }
-  //     let [result] = await connection.query(sql)
-  //     res.send(result)
-  //   }
-  //   catch(error){
-  //     console.log(error);
-  //     res.status(500).send({ error: true, message: 'Internal server error' });
-  //   }
-  //   }
+  const showComments = async(req, res) => {
+    const connection = await connectionPromise;
+    try{
+      let post_id = req.query.id
+      let sql =`SELECT comments.comment_id, comments.date, comments.text, comments.user_id, comments.post_id, user.name AS user_name, user.imgavatar AS user_avatar
+      FROM xpergg.comments
+      JOIN user ON comments.user_id = user.user_id
+      WHERE comments.post_id=?
+      ORDER BY comments.date ASC`;
+      const [results] = await connection.query(sql,[post_id]);
+      console.log(results)
+      res.send(results)
+    }
+    catch(error){
+      console.log(error);
+      res.status(500).send({ error: true, message: 'Internal server error' });
+    }
+    }
   
-    module.exports = { getXpergg, getPostsApi, addPostApi, getUserPostCount, addComment, addComment,getPostsByUser, showCommentsUser}
+    module.exports = { getXpergg, getPostsApi, addPostApi, showComments, getUserPostCount, addComment, addComment,getPostsByUser, showCommentsUser}
