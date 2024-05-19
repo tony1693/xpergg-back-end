@@ -116,24 +116,44 @@ const addComment = async (req, res) => {
 
   // GET a la tabla de comentarios por POST_ID! 
 
+  // const showComments = async(req, res) => {
+  //   const connection = await connectionPromise;
+  //   try{
+  //     let post_id = req.params.id
+  //     let sql =`SELECT comments.comment_id, comments.date, comments.text, comments.user_id, comments.post_id, post.post_id AS post 
+  //     FROM comments
+  //     JOIN post ON comments.post_id = post.post_id
+  //     WHERE comments.post_id=?
+  //     ORDER BY comments.date ASC`;
+  //     const [results] = await connection.query(sql,[post_id]);
+  //     console.log('postId es: ', post_id)
+  //     res.send(results)
+  //   }
+  //   catch(error){
+  //     console.log(error);
+  //     res.status(500).send({ error: true, message: 'Internal server error' });
+  //   }
+  //   }
+
   const showComments = async(req, res) => {
     const connection = await connectionPromise;
     try{
       let post_id = req.params.id
-      let sql =`SELECT comments.comment_id, comments.date, comments.text, comments.user_id, comments.post_id, post.post_id AS post 
+      let sql =`SELECT comments.comment_id, comments.date, comments.text, comments.user_id, comments.post_id, post.post_id AS post, user.name AS userName
       FROM comments
       JOIN post ON comments.post_id = post.post_id
+      JOIN user ON comments.user_id = user.user_id
       WHERE comments.post_id=?
       ORDER BY comments.date ASC`;
       const [results] = await connection.query(sql,[post_id]);
-      console.log('postId es: ', post_id)
+      console.log('postId es: ', post_id, 'el userName es: ')
       res.send(results)
     }
     catch(error){
       console.log(error);
       res.status(500).send({ error: true, message: 'Internal server error' });
     }
-    }
+  }
 
     
   
