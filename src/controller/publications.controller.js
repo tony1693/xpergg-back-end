@@ -119,14 +119,14 @@ const addComment = async (req, res) => {
   const showComments = async(req, res) => {
     const connection = await connectionPromise;
     try{
-      let post_id = req.query.id
-      let sql =`SELECT comments.comment_id, comments.date, comments.text, comments.user_id, comments.post_id, user.name AS user_name, user.imgavatar AS user_avatar
-      FROM xpergg.comments
-      JOIN user ON comments.user_id = user.user_id
+      let post_id = req.params.id
+      let sql =`SELECT comments.comment_id, comments.date, comments.text, comments.user_id, comments.post_id, post.post_id AS post 
+      FROM comments
+      JOIN post ON comments.post_id = post.post_id
       WHERE comments.post_id=?
       ORDER BY comments.date ASC`;
       const [results] = await connection.query(sql,[post_id]);
-      console.log(results)
+      console.log('postId es: ', post_id)
       res.send(results)
     }
     catch(error){
@@ -134,5 +134,7 @@ const addComment = async (req, res) => {
       res.status(500).send({ error: true, message: 'Internal server error' });
     }
     }
+
+    
   
     module.exports = { getXpergg, getPostsApi, addPostApi, showComments, getUserPostCount, addComment, addComment,getPostsByUser, showCommentsUser}
